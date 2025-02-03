@@ -18,9 +18,9 @@ class Simulacao:
         ]
         self.elevador = Elevador(capacidade=5, andares=len(self.predios))
         self.universo_id = "meu_universo"  # ID do universo de origem
-        self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.udp_socket.bind(('', 12345))  # Porta para escutar
-
+        self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Criar o socket
+        self.udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)  # Permitir broadcast
+        self.udp_socket.bind(('', 12345))  # Porta para escu
     def criar_sim(self, id):
         tipo = random.choice(["Aluno", "Servidor"])
         sim = Sim(id, tipo)
