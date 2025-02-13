@@ -28,11 +28,12 @@ class Simulacao:
         return sim
 
     def enviar_sims(self):
-        # Envia os Sims em formato JSON com o ID do universo via broadcast
-        dados = [{"id": sim.id, "tipo": sim.tipo, "universo_id": self.universo_id} for sim in self.sims]
-        mensagem = json.dumps(dados).encode('utf-8')
-        self.udp_socket.sendto(mensagem, ('<broadcast>', 12345))
-        print("Sims enviados para a rede.")
+        for sim in self.sims:
+            dados = {"id": sim.id, "tipo": sim.tipo, "universo_id": self.universo_id}
+            mensagem = json.dumps(dados).encode('utf-8')
+            self.udp_socket.sendto(mensagem, ('<broadcast>', 12345))
+            print(f"Sim {sim.id} enviado para a rede.")
+
 
     def receber_sims(self):
         # Recebe Sims de um arquivo JSON
@@ -45,9 +46,9 @@ class Simulacao:
                 print(f"Recebido Sim: {sim.id}, Tipo: {sim.tipo} de {endereco}")
 
     def iniciar(self):
-        # Inicia a thread para receber Sims
         import threading
         threading.Thread(target=self.receber_sims, daemon=True).start()
+
 
         while True:
             sim_id = len(self.sims) + 1
@@ -63,7 +64,8 @@ class Simulacao:
                 self.elevador.mover_para(andar_destino)
                 self.elevador.sair(novo_sim)
 
-            self.enviar_sims()  # Envia os Sims a cada iteração
+            self.enviar_sims()
+
             time.sleep(1)  # Pausa para simular o tempo entre as ações
 
 if __name__ == "__main__":
